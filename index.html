@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>RealityQuest – ADHD Helper</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="rq-header">
+    <img src="assets/logo.png" alt="Logo" class="rq-logo"/>
+    <span class="rq-title neon-glass">RealityQuest <span class="rq-subtitle">ADHD Helper</span></span>
+  </header>
+
+  <!-- ONBOARDING -->
+  <div id="onboarding" class="rq-modal">
+    <form id="onboarding-form" class="rq-onboard-box">
+      <h2>Welcome! Let's set up your quest</h2>
+      <input required name="name" id="rq-name" placeholder="Your Name" maxlength="20"/>
+      <label>Age: <span id="rq-age-value">18</span>
+        <input type="range" id="rq-age" min="7" max="70" value="18"/>
+      </label>
+      <div class="rq-modes">
+        <label><input type="radio" name="mode" value="ADHD" checked/> ADHD</label>
+        <label><input type="radio" name="mode" value="Productive"/> Productive</label>
+        <label><input type="radio" name="mode" value="Professional"/> Professional</label>
+      </div>
+      <button type="submit">Start Quest 🚀</button>
+      <div class="rq-footer">© 2025 RealityQuest ADHD | Built by Suraj Kumar Gupta 🚀</div>
+    </form>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="rq-app" style="display:none;">
+    <div class="rq-greeting">
+      <span id="rq-welcome"></span>
+      <button id="rq-theme-toggle" title="Theme"></button>
+    </div>
+    <div id="music-player"></div>
+    <div class="rq-flex">
+      <main class="rq-main">
+        <section id="pomodoro-sec"></section>
+        <section id="streak-sec"></section>
+        <button id="ach-btn" class="rq-btn">View Achievements</button>
+        <section id="tasks-sec"></section>
+      </main>
+      <aside>
+        <section id="calc-sec"></section>
+        <section id="archive-sec"></section>
+      </aside>
+    </div>
+    <div id="boss-modal"></div>
+    <div id="ach-modal"></div>
+    <section id="founder-sec"></section>
+    <footer class="rq-footer">© 2025 RealityQuest ADHD | Built by Suraj Kumar Gupta 🚀</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+  </html>
+  
