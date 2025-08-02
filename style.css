@@ -1,0 +1,51 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(120deg,#d5eaff 0%,#f2cfff 100%);
+}
+.rq-header {
+  display: flex; align-items: center; padding: 18px 18px 2px 18px; margin:0 auto; max-width:800px;
+}
+.rq-logo {
+  height: 54px; width: 54px; border-radius: 8px; margin-right: 18px;
+  background: rgba(255,255,255,0.4); box-shadow: 0 4px 8px #bdb4f833;
+}
+.rq-title { font-size: 2.2rem; font-weight: bold; }
+.rq-subtitle { display:block; font-size:1rem; font-weight: 400; letter-spacing:.03em; }
+.neon-glass {
+  text-shadow: 0 1px 10px #b4c1ff, 0 0 7px #f6a, 0 0 18px #55f9;
+}
+.rq-modal { width:100vw; min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(120deg,#d7eaff 20%,#f2cfff 100%);}
+.rq-onboard-box {
+  background: rgba(255,255,255,0.61); border-radius: 1.5em; box-shadow:0 6px 32px #abadea33;
+  padding: 36px 28px 20px 28px; max-width:370px; display:flex; flex-direction:column; gap:.85em;
+  border:1.3px solid #bccc;
+}
+.rq-onboard-box input[type=text], .rq-onboard-box input[type=range] {margin-bottom:6px;width:100%;}
+.rq-modes { display: flex; justify-content: space-between; }
+.rq-modes label { font-size: 1rem; cursor: pointer;}
+.rq-btn {
+  background: linear-gradient(91deg,#fad 52%,#aef 99%);
+  color: #224; border-radius: 7px; border: 1.2px solid #d4d; padding:7px 20px; font-size:1.08em; font-weight:700; transition:.17s; cursor:pointer;
+}
+.rq-btn:hover { background: linear-gradient(90deg,#c2ffea 0%,#ffbfff 100%); color:#2a22aa;}
+.rq-footer { text-align:center; font-size:13px; margin-top:24px; margin-bottom: 6px; color:#333a;}
+/* App containers */
+#rq-app {max-width:1000px; margin:0 auto;}
+.rq-greeting {display:flex;align-items:center; justify-content:space-between; margin:12px 12px 2px 12px;}
+#rq-theme-toggle { border:none; background:#fff5; border-radius:100px; font-size:1.3em;padding:7px 17px;margin-left:9px; cursor:pointer;}
+.rq-flex {display:flex; flex-wrap:wrap; gap:42px;align-items:flex-start; margin:0 10px;}
+.rq-main {flex:1;}
+aside { width: 255px; min-width:180px;}
+/* Pomodoro and Task sections */
+.rq-box {background:rgba(255,255,255,0.52); border-radius:13px;box-shadow:0 3px 15px #bdb4f866; border:1.1px solid #aac; padding:22px; margin-bottom:18px;}
+/* ... Continue styling for task list, streak, achievements, etc. ... */
+.boss-overlay {position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:20;}
+.boss-modal {background:rgba(255,248,248,0.98);border:3.5px solid #f44;border-radius:20px;padding:39px 50px; text-align:center;}
+.boss-modal h2 {color:#c11;font-size:2.3em;text-shadow:0 0 7px #fa8;}
+/* Add more as needed... */
+@media (max-width: 800px) {
+  .rq-flex {flex-direction: column;}
+  aside {width:100%;}
+}
