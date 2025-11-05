@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RealityQuest – ADHD Helper</title>
+  <style>
+    /* ===== CSS VARIABLES & THEMING ===== */
+    :root {
+      /* Brand / Primary */
+      --color-primary: #16A34A;
+      --color-primary-600: #15803D;
+      --color-primary-700: #166534;
+
+      /* Neutral / Backgrounds */
+      --color-black: #0A0A0A;
+      --color-gray-900: #111827;
+      --color-gray-700: #374151;
+      --color-gray-300: #E5E7EB;
+      --color-gray-100: #F3F4F6;
+      --color-white: #FFFFFF;
+
+      /* Accent red */
+      --color-accent: #DC2626;
+      --color-accent-700: #B91C1C;
+
+      /* Feedback */
+      --color-success: #22C55E;
+      --color-warning: #F59E0B;
+      --color-danger: #EF4444;
+
+      /* Text */
+      --text-on-dark: #F9FAFB;
+      --text-on-light: #111827;
+
+      /* Semantic defaults */
+      --bg-default: var(--color-white);
+      --bg-elevated: #F9FAFB;
+      --bg-muted: var(--color-gray-100);
+
+      --brand: var(--color-primary);
+      --brand-strong: var(--color-primary-600);
+
+      --accent: var(--color-accent);
+      --accent-strong: var(--color-accent-700);
+
+      --text-primary: var(--text-on-light);
+      --text-secondary: #374151;
+      --text-invert: var(--text-on-dark);
+
+      --border: var(--color-gray-300);
+
+      /* Effects */
+      --shadow-soft: 0 6px 22px rgba(0,0,0,0.08);
+      --ring-brand: 0 0 0 3px rgba(22,163,74,0.25);
+    }
+
+    /* Light theme: Green + White */
+    html[data-theme="light"] {
+      --bg-default: var(--color-white);
+      --bg-elevated: #F9FAFB;
+      --bg-muted: var(--color-gray-100);
+      --text-primary: var(--text-on-light);
+      --text-secondary: #374151;
+      --border: var(--color-gray-300);
+    }
+
+    /* Dark theme: Green + Black */
+    html[data-theme="dark"] {
+      --bg-default: var(--color-black);
+      --bg-elevated: var(--color-gray-900);
+      --bg-muted: #0F1115;
+      --text-primary: var(--text-on-dark);
+      --text-secondary: #D1D5DB;
+      --border: #22303b;
+    }
+
+    /* ===== BASE STYLES ===== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg-default);
+      color: var(--text-primary);
+      transition: background 220ms ease, color 220ms ease;
+    }
+
+    html, body {
+      scroll-behavior: smooth;
+    }
+
+    /* ===== ONBOARDING SCREEN ===== */
+    #onboarding {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(22, 163, 74, 0.08), rgba(0, 0, 0, 0.02));
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .rq-onboard-box {
+      width: 100%;
+      max-width: 420px;
+      background: color-mix(in oklab, var(--bg-elevated) 95%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px 22px 16px;
+      box-shadow: var(--shadow-soft);
+      margin: 0 16px;
+    }
+
+    .rq-onboard-box h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .rq-onboard-box input[type="text"],
+    .rq-onboard-box input[type="range"],
+    .rq-onboard-box input:not([type]) {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .rq-onboard-box input[type="text"],
+    .rq-onboard-box input:not([type]) {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      font-size: 1rem;
+    }
+
+    .rq-onboard-box input[type="text"]:focus,
+    .rq-onboard-box input:not([type]):focus {
+      border-color: var(--brand);
+      box-shadow: var(--ring-brand);
+    }
+
+    .rq-onboard-box input[type="range"] {
+      accent-color: var(--brand);
+      height: 6px;
+      cursor: pointer;
+    }
+
+    .rq-age-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    #rq-age-value {
+      font-weight: 800;
+      color: var(--brand);
+      font-size: 1.2rem;
+    }
+
+    .rq-modes {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .rq-modes label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--bg-muted);
+      border: 2px solid var(--border);
+      transition: all 0.2s ease;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .rq-modes input[type="radio"] {
+      margin-right: 6px;
+      cursor: pointer;
+    }
+
+    .rq-modes input[type="radio"]:checked + label,
+    .rq-modes label:has(input[type="radio"]:checked) {
+      background: var(--brand);
+      color: var(--text-invert);
+      border-color: var(--brand);
+    }
+
+    .rq-onboard-box button {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .rq-footer-onboard {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ===== MAIN APP ===== */
+    #rq-app {
+      display: none;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 12px;
+    }
+
+    #rq-app.active {
+      display: block;
+    }
+
+    /* ===== HEADER ===== */
+    .rq-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 0 8px 0;
+      margin: 0 auto;
+    }
+
+    .rq-logo {
+      height: 54px;
+      width: 54px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, rgba(22, 163, 74, 0.18), rgba(255, 255, 255, 0.55));
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .rq-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .rq-subtitle {
+      display: block;
+      font-size: 1rem;
+      font-weight: 500;
+      opacity: 0.85;
+    }
+
+    .neon-glass {
+      text-shadow:
+        0 0 10px rgba(22, 163, 74, 0.45),
+        0 0 18px rgba(22, 163, 74, 0.30);
+    }
+
+    .rq-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .rq-greeting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0 6px 0;
+      font-size: 1rem;
+    }
+
+    /* ===== BUTTONS ===== */
+    .rq-btn,
+    button {
+      appearance: none;
+      border: 1px solid transparent;
+      background: linear-gradient(180deg, var(--brand), var(--brand-strong));
+      color: var(--text-invert);
+      font-weight: 750;
+      border-radius: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(22, 163, 74, 0.25);
+      transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .rq-btn:hover,
+    button:hover {
+      background: linear-gradient(180deg, var(--brand-strong), var(--color-primary-700));
+      box-shadow: 0 8px 20px rgba(22, 163, 74, 0.33);
+    }
+
+    .rq-btn:active,
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .rq-btn--accent {
+      background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.28);
+      border: 1px solid rgba(220, 38, 38, 0.35);
+    }
+
+    .rq-btn--accent:hover {
+      background: linear-gradient(180deg, var(--accent-strong), #8f1313);
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.36);
+    }
+
+    #rq-theme-toggle {
+      font-size: 1.1rem;
+      padding: 6px 14px;
+      background: linear-gradient(180deg, var(--brand), var(--brand-strong));
+    }
+
+    /* ===== INPUTS ===== */
+    input[type="text"],
+    input:not([type]),
+    input[type="search"],
+    input[type="number"] {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      font-size: 0.95rem;
+    }
+
+    input:focus {
+      border-color: var(--brand);
+      box-shadow: var(--ring-brand);
+    }
+
+    input::placeholder {
+      color: color-mix(in oklab, var(--text-secondary) 80%, transparent);
+    }
+
+    input[type="range"] {
+      accent-color: var(--brand);
+    }
+
+    /* ===== CARDS/BOXES ===== */
+    .rq-box {
+      background: color-mix(in oklab, var(--bg-elevated) 98%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 18px;
+    }
+
+    /* ===== LAYOUT ===== */
+    .rq-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      align-items: flex-start;
+      margin: 0;
+    }
+
+    .rq-main {
+      flex: 1;
+    }
+
+    aside {
+      width: 260px;
+      min-width: 210px;
+    }
+
+    @media (max-width: 900px) {
+      aside {
+        width: 100%;
+      }
+    }
+
+    /* ===== POMODORO TIMER ===== */
+    .rq-pomo-main {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 2.2rem;
+      margin: 6px 0 10px;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .rq-minitext {
+      color: var(--text-secondary);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .rq-xpbar {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .rq-pomo-duration-select {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .rq-pomo-duration-select button {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      flex: 1;
+      min-width: 50px;
+    }
+
+    .rq-pomo-duration-select button.active {
+      background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+    }
+
+    /* ===== STREAK TRACKER ===== */
+    .rq-streak-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .rq-streak-fire {
+      font-size: 1.4em;
+      display: inline-block;
+      animation: pulse-fire 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse-fire {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* ===== TASKS ===== */
+    #tasks-sec .rq-taskbar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    #tasks-sec input {
+      flex: 1;
+    }
+
+    #rq-task-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 10px 0 0;
+    }
+
+    .rq-task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--bg-muted);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.08s ease;
+      word-break: break-word;
+    }
+
+    html[data-theme="dark"] .rq-task {
+      background: #0e1216;
+    }
+
+    .rq-task:hover {
+      transform: translateY(-1px);
+    }
+
+    .rq-task.completed {
+      background: color-mix(in oklab, var(--brand) 16%, var(--bg-elevated));
+      border-color: color-mix(in oklab, var(--brand) 40%, var(--border));
+      opacity: 0.95;
+      text-decoration: line-through;
+    }
+
+    .rq-task.boss {
+      background: color-mix(in oklab, var(--accent) 10%, var(--bg-muted));
+      border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+      animation: pulse-boss 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse-boss {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.95; }
+    }
+
+    .rq-task-text {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rq-task-btns {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .rq-task-btns button {
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+      box-shadow: none;
+    }
+
+    .rq-task-btns button:hover {
+      border-color: var(--brand);
+      box-shadow: var(--ring-brand);
+    }
+
+    .rq-task-btns button:active {
+      transform: translateY(1px);
+    }
+
+    /* ===== BOSS/ACHIEVEMENTS MODALS ===== */
+    .boss-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .boss-overlay.active {
+      display: flex;
+    }
+
+    .boss-modal {
+      background: color-mix(in oklab, var(--bg-elevated) 98%, transparent);
+      border: 3px solid var(--accent);
+      border-radius: 18px;
+      padding: 30px 34px;
+      text-align: center;
+      max-width: 520px;
+      width: 92%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      animation: modal-enter 0.3s ease-out;
+    }
+
+    @keyframes modal-enter {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .boss-modal h2 {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 2.1rem;
+      text-shadow: 0 0 16px rgba(220, 38, 38, 0.36);
+    }
+
+    .boss-task {
+      font-size: 1.1rem;
+      margin: 12px 0;
+      font-weight: 600;
+    }
+
+    #boss-countdown {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 2.1rem;
+      color: var(--accent);
+      margin: 12px 0;
+    }
+
+    #ach-modal .boss-modal {
+      border-color: var(--brand);
+    }
+
+    #ach-modal h3 {
+      color: var(--brand);
+    }
+
+    .rq-ach-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 16px 0;
+    }
+
+    .rq-badge {
+      background: var(--bg-muted);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .rq-badge.unlocked {
+      background: color-mix(in oklab, var(--brand) 20%, var(--bg-elevated));
+      border-color: var(--brand);
+    }
+
+    .rq-badge-icon {
+      font-size: 2em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .rq-badge-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .rq-badge-status {
+      color: var(--brand);
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    /* ===== MUSIC PLAYER ===== */
+    #music-player {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    #music-toggle {
+      font-size: 1.4em;
+      padding: 6px 10px;
+      min-width: 50px;
+      flex-shrink: 0;
+    }
+
+    #music-embed {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #music-embed iframe {
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .music-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .music-controls button {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+
+    #music-volume {
+      width: 80px;
+      accent-color: var(--brand);
+    }
+
+    /* ===== CALCULATOR ===== */
+    #calc-sec {
+      text-align: center;
+    }
+
+    #calc-inp {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      width: 100px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    #calc-eq {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+
+    #calc-res {
+      margin-top: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    /* ===== MONTHLY ARCHIVE ===== */
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      font-size: 0.8rem;
+    }
+
+    .archive-day {
+      padding: 4px 6px;
+      border-radius: 6px;
+      background: var(--bg-muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      text-align: center;
+    }
+
+    .archive-day:hover {
+      transform: scale(1.05);
+    }
+
+    .archive-day.active {
+      background: color-mix(in oklab, var(--brand) 30%, var(--bg-elevated));
+      border-color: var(--brand);
+      font-weight: 600;
+    }
+
+    /* ===== FOUNDERS SECTION ===== */
+    .rq-founder-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .rq-founder-avatar {
+      width: 62px;
+      height: 62px;
+      border-radius: 8px;
+      background: color-mix(in oklab, var(--brand) 20%, var(--bg-elevated));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      flex-shrink: 0;
+      border: 2px solid var(--brand);
+    }
+
+    .rq-founder-info {
+      flex: 1;
+    }
+
+    .rq-founder-name {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 4px;
+    }
+
+    .rq-founder-title {
+      font-size: 0.88em;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    #founder-form {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    #founder-form input {
+      flex: 1;
+      padding: 8px 10px;
+    }
+
+    #founder-form button {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+
+    #fSent {
+      margin-left: 10px;
+      display: none;
+      animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* ===== FOOTER ===== */
+    .rq-footer {
+      text-align: center;
+      font-size: 13px;
+      margin: 24px 0 16px;
+      color: var(--text-secondary);
+    }
+
+    /* ===== TOAST NOTIFICATIONS ===== */
+    .rq-toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      z-index: 100;
+      box-shadow: var(--shadow-soft);
+      animation: toast-enter 0.3s ease;
+    }
+
+    @keyframes toast-enter {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    /* ===== JUST START BUTTON ===== */
+    .rq-just-start-btn {
+      background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+      color: #fff;
+      padding: 10px 16px;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.28);
+    }
+
+    .rq-just-start-btn:hover {
+      background: linear-gradient(180deg, var(--accent-strong), #8f1313);
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.36);
+    }
+
+    /* ===== FOCUS MODE (Just Start) ===== */
+    body.focus-mode #music-player,
+    body.focus-mode #calc-sec,
+    body.focus-mode #archive-sec {
+      display: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .rq-title {
+        font-size: 1.8rem;
+      }
+
+      .rq-pomo-main {
+        font-size: 2rem;
+      }
+
+      .rq-flex {
+        gap: 16px;
+      }
+
+      .rq-onboard-box {
+        margin: 0 12px;
+      }
+
+      aside {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== ONBOARDING SCREEN ===== -->
+  <div id="onboarding">
+    <form id="onboarding-form" class="rq-box" style="width: 100%; max-width: 420px; margin: 16px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 2rem; margin-bottom: 8px;">🎮</div>
+        <h1 style="margin: 0; font-size: 1.8rem; font-weight: 800;">RealityQuest</h1>
+        <p style="margin: 4px 0 0 0; font-size: 0.95rem; opacity: 0.8;">ADHD Helper</p>
+      </div>
+
+      <h2>Welcome! Let's set up your quest</h2>
+
+      <label style="display: block; margin-bottom: 12px; font-weight: 600;">Your Name</label>
+      <input type="text" id="rq-name" placeholder="Your Name" maxlength="20" required />
+
+      <label class="rq-age-label">
+        Age: <span id="rq-age-value">18</span>
+      </label>
+      <input type="range" id="rq-age" min="7" max="70" value="18" />
+
+      <label style="display: block; margin-top: 12px; margin-bottom: 8px; font-weight: 600;">Choose Your Mode</label>
+      <div class="rq-modes">
+        <label>
+          <input type="radio" name="mode" value="ADHD" checked />
+          <span>ADHD</span>
+        </label>
+        <label>
+          <input type="radio" name="mode" value="Productive" />
+          <span>Productive</span>
+        </label>
+        <label>
+          <input type="radio" name="mode" value="Professional" />
+          <span>Professional</span>
+        </label>
+      </div>
+
+      <button type="submit" class="rq-btn" style="width: 100%; margin-top: 16px; font-size: 1rem;">Start Quest 🚀</button>
+
+      <div class="rq-footer-onboard">© 2025 RealityQuest ADHD | Built by Suraj Kumar Gupta 🚀</div>
+    </form>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div id="rq-app">
+    <!-- HEADER -->
+    <div class="rq-header">
+      <div class="rq-logo">🎮</div>
+      <div>
+        <div class="rq-title neon-glass">RealityQuest</div>
+        <div class="rq-subtitle">ADHD Helper</div>
+      </div>
+      <button id="rq-theme-toggle" style="margin-left: auto;">☀️</button>
+    </div>
+
+    <!-- GREETING -->
+    <div class="rq-greeting">
+      <span id="rq-welcome">👋 Welcome</span>
+      <button id="just-start-btn" class="rq-just-start-btn" style="font-size: 0.9rem; padding: 8px 14px;">⚡ Just Start</button>
+    </div>
+
+    <!-- MUSIC PLAYER -->
+    <div class="rq-box" id="music-player">
+      <button id="music-toggle">🎵</button>
+      <div id="music-embed" style="display: none; width: 100%;"></div>
+    </div>
+
+    <!-- MAIN FLEX LAYOUT -->
+    <div class="rq-flex">
+      <!-- MAIN SECTION -->
+      <main class="rq-main">
+        <!-- POMODORO TIMER -->
+        <div class="rq-box" id="pomodoro-sec">
+          <div style="text-align: center;">
+            <h3 style="margin-top: 0; margin-bottom: 4px;">Pomodoro Timer 🕒</h3>
+            
+            <!-- DURATION SELECTOR -->
+            <div class="rq-pomo-duration-select" id="rq-pomo-durations">
+              <button class="active" data-duration="15">15m</button>
+              <button data-duration="25">25m</button>
+              <button data-duration="45">45m</button>
+              <button data-duration="60">60m</button>
+            </div>
+
+            <div class="rq-pomo-main" id="rq-pomo-display">25:00</div>
+            <button id="pomo-start" class="rq-btn" style="width: 100%;">Start</button>
+            <div class="rq-minitext" style="margin-top: 6px;">Complete a pomodoro to earn 10 XP!</div>
+            <div class="rq-xpbar">XP: <span id="rq-xp-count">0</span></div>
+          </div>
+        </div>
+
+        <!-- STREAK TRACKER -->
+        <div class="rq-box" id="streak-sec">
+          <div class="rq-streak-display">
+            <span class="rq-streak-fire">🔥</span>
+            <span>Streak: <strong id="rq-streak-count">0</strong> day(s)</span>
+            <span style="margin-left: auto; font-size: 0.9rem; opacity: 0.8;">Best: <strong id="rq-best-streak">0</strong></span>
+          </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <button id="ach-btn" class="rq-btn" style="width: 100%; margin-bottom: 12px;">View Achievements 🏆</button>
+
+        <!-- QUICK RECALL -->
+        <button id="recall-btn" class="rq-btn" style="width: 100%; margin-bottom: 12px; background: linear-gradient(180deg, #f59e0b, #d97706); box-shadow: 0 6px 16px rgba(245,158,11,0.25);">What Was I Doing? 🧠</button>
+
+        <!-- TASK LIST -->
+        <div class="rq-box" id="tasks-sec">
+          <h3 style="margin-top: 0;">Quest List 📋</h3>
+          <form id="rq-taskform" class="rq-taskbar">
+            <input id="task-input" placeholder="Add quest or task" maxlength="50" />
+            <button class="rq-btn" type="submit">Add</button>
+          </form>
+          <ul id="rq-task-list"></ul>
+        </div>
+      </main>
+
+      <!-- SIDEBAR -->
+      <aside>
+        <!-- CALCULATOR -->
+        <div class="rq-box" id="calc-sec">
+          <h3 style="margin-top: 0; margin-bottom: 12px; text-align: center;">Calc 🧮</h3>
+          <input id="calc-inp" placeholder="12 + 7 * 2" type="text" />
+          <button id="calc-eq" class="rq-btn" style="width: 100%; padding: 8px;">= </button>
+          <div id="calc-res"></div>
+        </div>
+
+        <!-- MONTHLY ARCHIVE -->
+        <div class="rq-box" id="archive-sec">
+          <h3 style="margin-top: 0; margin-bottom: 12px;">Monthly Archive 📅</h3>
+          <div class="archive-grid" id="rq-archive-grid"></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- BOSS FIGHT MODAL -->
+    <div class="boss-overlay" id="boss-modal">
+      <div class="boss-modal">
+        <h2>BOSS FIGHT! ⚔️</h2>
+        <div class="boss-task" id="boss-task-name"></div>
+        <div id="boss-countdown">30</div>
+        <button id="boss-defeat" class="rq-btn rq-btn--accent" style="width: 100%;">Defeat Boss</button>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS MODAL -->
+    <div class="boss-overlay" id="ach-modal">
+      <div class="boss-modal">
+        <h3 style="margin-top: 0; margin-bottom: 12px;">Achievements 🏅</h3>
+        <div class="rq-ach-grid" id="rq-ach-grid"></div>
+        <button id="close-ach" class="rq-btn" style="width: 100%; margin-top: 12px;">Close</button>
+      </div>
+    </div>
+
+    <!-- QUICK RECALL MODAL -->
+    <div class="boss-overlay" id="recall-modal">
+      <div class="boss-modal">
+        <h3 style="margin-top: 0; margin-bottom: 12px;">What Was I Doing? 🧠</h3>
+        <div id="recall-content" style="text-align: left; max-height: 300px; overflow-y: auto;">
+          <p style="color: var(--text-secondary); text-align: center;">No recent activity</p>
+        </div>
+        <button id="close-recall" class="rq-btn" style="width: 100%; margin-top: 12px;">Close</button>
+      </div>
+    </div>
+
+    <!-- FOUNDERS SECTION -->
+    <div class="rq-box" id="founder-sec" style="margin-top: 32px;">
+      <div class="rq-founder-card">
+        <div class="rq-founder-avatar">SK</div>
+        <div class="rq-founder-info">
+          <div class="rq-founder-name">Suraj Kumar Gupta</div>
+          <div class="rq-founder-title">Founder & Developer</div>
+        </div>
+      </div>
+      <form id="founder-form">
+        <input placeholder="Your message…" type="text" />
+        <button class="rq-btn" type="submit">Send</button>
+        <span id="fSent">Sent! 🎉</span>
+      </form>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="rq-footer">© 2025 RealityQuest ADHD | Built by Suraj Kumar Gupta 🚀</footer>
+  </div>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    // ===== STATE MANAGEMENT =====
+    let user = null;
+    let theme = localStorage.getItem('rq_theme') || 'light';
+    let xp = Number(localStorage.getItem('rq_xp')) || 0;
+    let tasks = JSON.parse(localStorage.getItem('rq_tasks') || '[]');
+    let streak = Number(localStorage.getItem('rq_streak')) || 0;
+    let bestStreak = Number(localStorage.getItem('rq_bestStreak')) || 0;
+    let achievements = JSON.parse(localStorage.getItem('rq_ach') || '{}');
+    let archives = JSON.parse(localStorage.getItem('rq_archives') || '{}');
+    let pomoDuration = 25;
+    let pomoSeconds = pomoDuration * 60;
+    let pomoActive = false;
+    let pomoTimer = null;
+    let bossVisible = false;
+    let bossTask = '';
+    let bossCountdown = 30;
+    let bossTimer = null;
+
+    const PLAYLISTS = [
+      { name: "Focus Playlist", url: "https://open.spotify.com/embed/playlist/5iMPQNcuMfYlWNRNUllc2o" },
+      { name: "Lofi Artist", url: "https://open.spotify.com/embed/artist/3pZWCUXB3D30ZyI6ubhDgC" }
+    ];
+
+    const BADGES = [
+      { key: 'pom3', label: '3 Pomodoros in a Row', icon: '🥉' },
+      { key: 'pom7', label: '7 Pomodoros Streak', icon: '🥈' },
+      { key: 'streak7', label: '7-Day Streak', icon: '🔥' },
+      { key: 'boss1', label: 'First Boss Defeated', icon: '🐲' },
+      { key: 'xp100', label: '100 XP Milestone', icon: '💎' }
+    ];
+
+    // ===== UTILITY FUNCTIONS =====
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+
+    function saveState() {
+      localStorage.setItem('rq_user', JSON.stringify(user));
+      localStorage.setItem('rq_theme', theme);
+      localStorage.setItem('rq_xp', xp);
+      localStorage.setItem('rq_tasks', JSON.stringify(tasks));
+      localStorage.setItem('rq_streak', streak);
+      localStorage.setItem('rq_bestStreak', bestStreak);
+      localStorage.setItem('rq_ach', JSON.stringify(achievements));
+      localStorage.setItem('rq_archives', JSON.stringify(archives));
+    }
+
+    function showToast(msg) {
+      const toast = document.createElement('div');
+      toast.className = 'rq-toast';
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    }
+
+    function updateStreak() {
+      const today = new Date().toLocaleDateString();
+      const lastSeen = localStorage.getItem('rq_lastSeen');
+      if (lastSeen !== today) {
+        localStorage.setItem('rq_lastSeen', today);
+        if (archives[today]) {
+          streak++;
+          if (streak > bestStreak) bestStreak = streak;
+          if (streak === 7) achievements.streak7 = true;
+        } else {
+          streak = 1;
+        }
+        saveState();
+      }
+    }
+
+    // ===== ONBOARDING =====
+    $('#onboarding-form').onsubmit = (e) => {
+      e.preventDefault();
+      user = {
+        name: $('#rq-name').value,
+        age: Number($('#rq-age').value),
+        mode: document.querySelector('input[name="mode"]:checked').value
+      };
+      saveState();
+      loadApp();
+    };
+
+    $('#rq-age').oninput = (e) => {
+      $('#rq-age-value').innerText = e.target.value;
+    };
+
+    function loadApp() {
+      if (!localStorage.getItem('rq_user')) return;
+      user = JSON.parse(localStorage.getItem('rq_user'));
+      theme = localStorage.getItem('rq_theme') || 'light';
+      xp = Number(localStorage.getItem('rq_xp')) || 0;
+      tasks = JSON.parse(localStorage.getItem('rq_tasks') || '[]');
+      streak = Number(localStorage.getItem('rq_streak')) || 0;
+      bestStreak = Number(localStorage.getItem('rq_bestStreak')) || 0;
+      achievements = JSON.parse(localStorage.getItem('rq_ach') || '{}');
+      archives = JSON.parse(localStorage.getItem('rq_archives') || '{}');
+
+      $('#onboarding').style.display = 'none';
+      $('#rq-app').classList.add('active');
+
+      loadTheme();
+      updateStreak();
+      renderUI();
+      attachEventListeners();
+    }
+
+    // ===== THEME =====
+    function loadTheme() {
+      document.documentElement.setAttribute('data-theme', theme);
+      setThemeBtn();
+    }
+
+    function setThemeBtn() {
+      $('#rq-theme-toggle').innerText = theme === 'dark' ? '🌙' : '☀️';
+    }
+
+    $('#rq-theme-toggle').onclick = () => {
+      theme = theme === 'light' ? 'dark' : 'light';
+      saveState();
+      loadTheme();
+    };
+
+    // ===== RENDER UI =====
+    function renderUI() {
+      // Greeting
+      $('#rq-welcome').innerText = `👋 Welcome ${user.name} (${user.mode} mode)`;
+
+      // Pomodoro
+      renderPomodoro();
+
+      // Streak
+      renderStreak();
+
+      // Tasks
+      renderTasks();
+
+      // Calculator
+      renderCalc();
+
+      // Archive
+      renderArchive();
+
+      // Achievements
+      renderAchievements();
+    }
+
+    function renderPomodoro() {
+      const min = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+      const sec = String(pomoSeconds % 60).padStart(2, '0');
+      $('#rq-pomo-display').innerText = `${min}:${sec}`;
+      $('#rq-xp-count').innerText = xp;
+      $('#pomo-start').innerText = pomoActive ? 'Pause' : 'Start';
+    }
+
+    function renderStreak() {
+      $('#rq-streak-count').innerText = streak;
+      $('#rq-best-streak').innerText = bestStreak;
+    }
+
+    function renderTasks() {
+      const list = $('#rq-task-list');
+      list.innerHTML = '';
+      tasks.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.className = `rq-task ${t.completed ? 'completed' : ''} ${t.boss ? 'boss' : ''}`;
+        li.innerHTML = `
+          <div class="rq-task-text">
+            ${t.boss ? '<span>🐲</span>' : ''}
+            <span>${t.text}</span>
+          </div>
+          <div class="rq-task-btns">
+            ${!t.completed ? `
+              <button type="button" onclick="window.markBoss(${i})" title="Mark as Boss">${t.boss ? '🐲' : '👹'}</button>
+              <button type="button" onclick="window.completeQuest(${i})" title="Complete">✅</button>
+            ` : ''}
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function renderCalc() {
+      $('#calc-eq').onclick = () => {
+        try {
+          const res = eval($('#calc-inp').value);
+          $('#calc-res').innerText = res;
+        } catch {
+          $('#calc-res').innerText = 'Error';
+        }
+      };
+    }
+
+    function renderArchive() {
+      const grid = $('#rq-archive-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 30; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toLocaleDateString();
+        const day = document.createElement('div');
+        day.className = `archive-day ${archives[dateStr] ? 'active' : ''}`;
+        day.innerText = dateStr.slice(0, 5);
+        day.title = dateStr;
+        grid.appendChild(day);
+      }
+    }
+
+    function renderAchievements() {
+      const grid = $('#rq-ach-grid');
+      grid.innerHTML = '';
+      BADGES.forEach(b => {
+        const badge = document.createElement('div');
+        badge.className = `rq-badge ${achievements[b.key] ? 'unlocked' : ''}`;
+        badge.innerHTML = `
+          <span class="rq-badge-icon">${b.icon}</span>
+          <div class="rq-badge-label">${b.label}</div>
+          ${achievements[b.key] ? '<div class="rq-badge-status">Unlocked</div>' : ''}
+        `;
+        grid.appendChild(badge);
+      });
+    }
+
+    // ===== POMODORO LOGIC =====
+    function startPomo() {
+      pomoActive = true;
+      renderPomodoro();
+      pomoTimer = setInterval(() => {
+        pomoSeconds--;
+        renderPomodoro();
+        if (pomoSeconds <= 0) {
+          clearInterval(pomoTimer);
+          pomoActive = false;
+          pomoSeconds = pomoDuration * 60;
+          addXP(10);
+          renderPomodoro();
+          showToast('Pomodoro Complete! +10 XP 🎉');
+          const today = new Date().toLocaleDateString();
+          archives[today] = true;
+          saveState();
+        }
+      }, 1000);
+    }
+
+    function stopPomo() {
+      if (pomoTimer) {
+        clearInterval(pomoTimer);
+        pomoActive = false;
+        renderPomodoro();
+      }
+    }
+
+    $('#pomo-start').onclick = () => {
+      if (pomoActive) stopPomo();
+      else startPomo();
+    };
+
+    // DURATION SELECTOR
+    $$('.rq-pomo-duration-select button').forEach(btn => {
+      btn.onclick = () => {
+        if (pomoActive) return;
+        $$('.rq-pomo-duration-select button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        pomoDuration = Number(btn.dataset.duration);
+        pomoSeconds = pomoDuration * 60;
+        renderPomodoro();
+      };
+    });
+
+    // ===== XP SYSTEM =====
+    function addXP(amount) {
+      xp += amount;
+      const count = Math.floor(tasks.filter(t => t.completed).length);
+      if (count === 3 && !achievements.pom3) {
+        achievements.pom3 = true;
+        showToast('Achievement Unlocked: 3 Pomodoros! 🥉');
+      }
+      if (count === 7 && !achievements.pom7) {
+        achievements.pom7 = true;
+        showToast('Achievement Unlocked: 7 Pomodoros! 🥈');
+      }
+      if (xp >= 100 && !achievements.xp100) {
+        achievements.xp100 = true;
+        showToast('Achievement Unlocked: 100 XP! 💎');
+      }
+      saveState();
+      renderPomodoro();
+      renderAchievements();
+    }
+
+    // ===== TASK MANAGEMENT =====
+    window.completeQuest = (idx) => {
+      tasks[idx].completed = true;
+      addXP(5);
+      const today = new Date().toLocaleDateString();
+      archives[today] = true;
+      saveState();
+      renderTasks();
+      renderArchive();
+    };
+
+    window.markBoss = (idx) => {
+      tasks[idx].boss = true;
+      saveState();
+      renderTasks();
+      showBossFight(tasks[idx].text);
+    };
+
+    $('#rq-taskform').onsubmit = (e) => {
+      e.preventDefault();
+      const input = $('#task-input');
+      if (!input.value.trim()) return;
+      tasks.push({ text: input.value, boss: false, completed: false });
+      input.value = '';
+      saveState();
+      renderTasks();
+    };
+
+    // ===== BOSS FIGHT =====
+    function showBossFight(taskName) {
+      bossVisible = true;
+      bossTask = taskName;
+      bossCountdown = 30;
+      $('#boss-task-name').innerText = taskName;
+      $('#boss-countdown').innerText = bossCountdown;
+      $('#boss-modal').classList.add('active');
+
+      if (bossTimer) clearInterval(bossTimer);
+      bossTimer = setInterval(() => {
+        bossCountdown--;
+        $('#boss-countdown').innerText = bossCountdown;
+        if (bossCountdown <= 0) {
+          clearInterval(bossTimer);
+          closeBoss();
+        }
+      }, 1000);
+    }
+
+    function closeBoss() {
+      bossVisible = false;
+      $('#boss-modal').classList.remove('active');
+      if (bossTimer) clearInterval(bossTimer);
+    }
+
+    $('#boss-defeat').onclick = () => {
+      addXP(30);
+      if (!achievements.boss1) {
+        achievements.boss1 = true;
+        showToast('Achievement Unlocked: First Boss! 🐲');
+      }
+      const idx = tasks.findIndex(t => t.text === bossTask);
+      if (idx >= 0) completeQuest(idx);
+      closeBoss();
+      showToast('Boss Defeated! +30 XP 🐲');
+    };
+
+    // ===== ACHIEVEMENTS MODAL =====
+    $('#ach-btn').onclick = () => {
+      $('#ach-modal').classList.add('active');
+    };
+
+    $('#close-ach').onclick = () => {
+      $('#ach-modal').classList.remove('active');
+    };
+
+    // ===== QUICK RECALL =====
+    $('#recall-btn').onclick = () => {
+      const completed = tasks.filter(t => t.completed).slice(-3).reverse();
+      const active = tasks.find(t => !t.completed && t.text);
+      let html = '';
+      if (completed.length > 0) {
+        html += '<strong>Recently Completed:</strong><ul style="margin-top: 8px; padding-left: 16px;">';
+        completed.forEach(t => {
+          html += `<li>${t.text}</li>`;
+        });
+        html += '</ul>';
+      }
+      if (active) {
+        html += `<strong style="display: block; margin-top: 12px;">Current Task:</strong><p style="margin-top: 8px;">${active.text}</p>`;
+      }
+      if (!html) html = '<p style="color: var(--text-secondary); text-align: center;">No recent activity</p>';
+      $('#recall-content').innerHTML = html;
+      $('#recall-modal').classList.add('active');
+    };
+
+    $('#close-recall').onclick = () => {
+      $('#recall-modal').classList.remove('active');
+    };
+
+    // ===== MUSIC PLAYER =====
+    let musicOn = localStorage.getItem('rq_music_on') === '1';
+    let musicTrack = Number(localStorage.getItem('rq_music_track')) || 0;
+
+    function renderMusic() {
+      const embed = $('#music-embed');
+      if (musicOn) {
+        embed.innerHTML = `
+          <iframe src="${PLAYLISTS[musicTrack].url}" width="250" height="80" allow="encrypted-media" style="border-radius: 10px; border: 1px solid var(--border);"></iframe>
+          <div class="music-controls">
+            <button type="button" class="rq-btn" onclick="window.nextPlaylist()">Change Playlist</button>
+            <input type="range" id="music-volume" min="0" max="100" value="50" />
+          </div>
+        `;
+        embed.style.display = 'flex';
+      } else {
+        embed.style.display = 'none';
+      }
+    }
+
+    $('#music-toggle').onclick = () => {
+      musicOn = !musicOn;
+      localStorage.setItem('rq_music_on', musicOn ? '1' : '0');
+      $('#music-toggle').innerText = musicOn ? '🎵' : '🚫';
+      renderMusic();
+    };
+
+    window.nextPlaylist = () => {
+      musicTrack = (musicTrack + 1) % 2;
+      localStorage.setItem('rq_music_track', musicTrack);
+      renderMusic();
+    };
+
+    // ===== JUST START BUTTON =====
+    $('#just-start-btn').onclick = () => {
+      document.body.classList.toggle('focus-mode');
+      if (document.body.classList.contains('focus-mode')) {
+        if (!pomoActive) startPomo();
+        $('#just-start-btn').innerText = '✨ Exit Focus';
+      } else {
+        stopPomo();
+        $('#just-start-btn').innerText = '⚡ Just Start';
+      }
+    };
+
+    // ===== FOUNDER FORM =====
+    $('#founder-form').onsubmit = (e) => {
+      e.preventDefault();
+      $('#fSent').style.display = 'inline';
+      setTimeout(() => {
+        $('#fSent').style.display = 'none';
+      }, 1800);
+      e.target.reset();
+    };
+
+    // ===== EVENT LISTENERS =====
+    function attachEventListeners() {
+      // Already attached inline
+    }
+
+    // ===== INIT =====
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('rq_user')) {
+        loadApp();
+      }
+    });
+  </script>
+</body>
+</html>
